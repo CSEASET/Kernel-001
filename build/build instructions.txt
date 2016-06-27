@@ -1,0 +1,17 @@
+hrough when you want to have GRUB 2 load your kernel. It's actually rather simple to create a GRUB2 image (assuming you have GRUB2 either built or installed):
+ISO instructions
+There have been a lot of tries to make Grub2 work good with ISOs, but mostly failed. The only combination of commands that seems to work is the following.
+First create a directory tree called "iso", where you put your kernel (and any other needed files) somewhere. Then in the boot/grub subdirectory create the grub.cfg file which is your configuration.
+Now run:
+
+grub-mkrescue -o bootable.iso iso
+
+
+
+
+Be sure that your grub.cfg is syntactically correct. A common mistake is to put the menuentry brace on newline. It must be like:
+
+
+
+menuentry "Place your os name here" {
+}

@@ -1,4 +1,5 @@
 #include "includes/keyboard_map.h"
+#include "gdt.c"
 
 /* there are 25 lines each of 80 columns; each element takes 2 bytes */
 #define LINES 25
@@ -165,12 +166,14 @@ void kmain(void)
     }
 
     kputchar('a');
-
+    gdt_init();
     idt_init();
     kb_init();
-    kputchar('b');
-    while(1);
+    kputchar('c');
 
+
+    while(1)
+        asm volatile ("hlt");
 }
 
 void kputchar(unsigned char ch){
