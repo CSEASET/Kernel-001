@@ -103,8 +103,8 @@ void kb_init(void)
 
 
 void keyboard_handler_main(void) {
-    //putchar('a', current_loc);
-    //current_loc += 2;
+    putchar('a', current_loc);
+    current_loc += 2;
 	unsigned char status;
 	char keycode;
 
