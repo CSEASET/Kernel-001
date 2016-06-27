@@ -28,6 +28,11 @@ extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long * idt_ptr);
 
+// prototypes here
+
+void kputchar(unsigned char);
+
+
 void __stack_chk_fail(void) {}
 
 
@@ -159,17 +164,16 @@ void kmain(void)
     
     }
 
-    //putchar('a', current_loc);
+    kputchar('a');
 
     idt_init();
     kb_init();
-
+    kputchar('b');
     while(1);
-    return;
 
 }
 
-void putchar(unsigned char ch, unsigned int pos){
-    vidptr[pos] = keyboard_map[ch];
-    vidptr[pos+1] = 0x07;
+void kputchar(unsigned char ch){
+    vidptr[current_loc++] = ch;//keyboard_map[ch];
+    vidptr[current_loc++] = 0x07;
 }
