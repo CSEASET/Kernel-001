@@ -121,6 +121,16 @@ void keyboard_handler_main(void) {
 	/* Lowest bit of status will be set if buffer is not empty */
 	if (status & 0x01) {
 		keycode = read_port(KEYBOARD_DATA_PORT);
+		
+		if (keycode ==58){
+			
+			counter++;
+			if (counter%2==0)
+			{
+				str[j]=str[j]-32;
+			}
+		}
+
 		if (keycode == 14){
 			vidptr[current_loc-2] = ' ';
 			vidptr[current_loc-1] = 0x07;
@@ -140,6 +150,7 @@ void kmain(void)
     const char *str = "my first kernel";
     current_loc = 0;
     unsigned int j = 0;
+    unsigned int counter = 1;
 
     /* this loops clears the screen
     * there are 25 lines each of 80 columns; each element takes 2 bytes */
