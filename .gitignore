@@ -6,3 +6,4 @@
 *.o
 build/kernel
 build/iso/boot/kernel*
+build/bootable.iso
