@@ -1,0 +1,8 @@
+#ignore all useless and temp files
+
+
+*~
+*.sw*
+*.o
+build/kernel
+build/iso/boot/kernel*

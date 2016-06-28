@@ -1,4 +1,0 @@
-menuentry "Kernel-002" {
-    multiboot /boot/kernel-001
-    boot
-}
