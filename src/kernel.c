@@ -28,10 +28,14 @@ void kmain(void)
 
     // console handling
     console_init();
-    currentVidPtr = &consoles[0];
-    drawConsole();
-    kputs(str);
+    currentConsole = &consoles[0];
 
+
+    kputs(str, currentConsole);
+    drawConsole(currentConsole);
+    
+    
+    
     while(1)
         asm volatile ("hlt");
 }
