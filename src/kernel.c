@@ -14,13 +14,14 @@
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 
 #define ENTER_KEY_CODE 0x1C
-
+#define FALSE 0
+#define TRUE 1
 
 // globals here
 
 char *vidptr = (char*)0xb8000;  //video mem begins here.
 unsigned int current_loc = 0;
-
+int GLOBAL_CAPSLOCK = FALSE;
 
 // externs here
 
@@ -122,32 +123,37 @@ void keyboard_handler_main(void) {
 	if (status & 0x01) {
 		keycode = read_port(KEYBOARD_DATA_PORT);
 		
-	/*	if (keycode ==58){
-			
-			counter++;
-			if (counter%2==0)
-			{
-				str[j]=str[j]-32;
-			}
-		}
-*/
-		if (keycode == 14){
-			vidptr[current_loc-2] = ' ';
-			vidptr[current_loc-1] = 0x07;
-			current_loc -= 2;
-			return;
-		}
-
 		if(keycode < 0)
 			return;
-		vidptr[current_loc++] = keyboard_map[(unsigned char) keycode];
-		vidptr[current_loc++] = 0x07;	
-	}
+
+	    if (keycode == 58){
+            GLOBAL_CAPSLOCK = !GLOBAL_CAPSLOCK;
+            return;
+		}
+
+		if (keycode == 14){
+            if(current_loc>0){
+		    	vidptr[current_loc-2] = ' ';
+		    	vidptr[current_loc-1] = 0x07;
+		    	current_loc -= 2;
+            }
+		
+            return;
+		}
+        
+        if(GLOBAL_CAPSLOCK){
+		    vidptr[current_loc++] = (char) (keyboard_map[(unsigned char) keycode] - 32);
+		    vidptr[current_loc++] = 0x07;	
+        } else {
+           	vidptr[current_loc++] = keyboard_map[(unsigned char) keycode];
+            vidptr[current_loc++] = 0x07;
+	    }
+    }
 }
 
 void kmain(void)
 {
-    const char *str = "my first kernel";
+    const char *str = "my first Kernel";
     current_loc = 0;
     unsigned int j = 0;
     unsigned int counter = 1;
