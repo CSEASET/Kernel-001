@@ -2,6 +2,7 @@
 #include "gdt.c"
 #include "includes/kstdio.h"
 #include "includes/keyboard.h"
+#include "memory/mm.c"
 
 
 
@@ -16,7 +17,7 @@ void __stack_chk_fail(void) {}
 
 
 
-void kmain(void)
+void kmain(multiboot_info_t* mbd, unsigned int magic)
 {
     const char *str = "my first Kernel";
     
@@ -33,6 +34,8 @@ void kmain(void)
 
     kputs(str, currentConsole);
     drawConsole(currentConsole);
+
+    kputs(itoa(mbd->flags, 2), currentConsole);
     
     
     

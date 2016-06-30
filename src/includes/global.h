@@ -12,3 +12,12 @@
 // data types
 
 typedef unsigned int u_int;
+
+
+
+
+// global buffers
+
+// buffer for itoa
+
+char itoaBuffer[200];

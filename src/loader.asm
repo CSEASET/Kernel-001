@@ -67,6 +67,7 @@ keyboard_handler:
 start:
     cli
 	mov esp, stack_space
+    push ebx
 	call kmain
     cli
 .loop:
