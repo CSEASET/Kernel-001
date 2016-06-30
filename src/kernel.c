@@ -1,5 +1,5 @@
-#include "includes/global.h"
 #include "gdt.c"
+#include "memory/multiboot.h"
 #include "includes/kstdio.h"
 #include "includes/keyboard.h"
 #include "memory/mm.c"

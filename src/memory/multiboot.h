@@ -40,7 +40,7 @@
      # define EXT_C(sym)                     sym
      #endif
      
-     #ifndef ASM
+
      /* Do not include here in boot.S. */
      
      /* Types. */
@@ -75,6 +75,19 @@
        unsigned long addr;
        unsigned long shndx;
      } elf_section_header_table_t;
+
+    /* The memory map. Be careful that the offset 0 is base_addr_low
+        but no size. */
+     typedef struct memory_map
+     {
+       unsigned long size;
+       unsigned long base_addr_low;
+       unsigned long base_addr_high;
+       unsigned long length_low;
+       unsigned long length_high;
+       unsigned long type;
+     } MULTIBOOT_MEMORY_MAP;
+     
      
      /* The Multiboot information. */
      typedef struct multiboot_info
@@ -92,7 +105,7 @@
          elf_section_header_table_t elf_sec;
        } u;
        unsigned long mmap_length;
-       unsigned long mmap_addr;
+       MULTIBOOT_MEMORY_MAP * mmap_addr;
      } multiboot_info_t;
      
      /* The module structure. */
@@ -104,16 +117,14 @@
        unsigned long reserved;
      } module_t;
      
-     /* The memory map. Be careful that the offset 0 is base_addr_low
-        but no size. */
-     typedef struct memory_map
-     {
-       unsigned long size;
-       unsigned long base_addr_low;
-       unsigned long base_addr_high;
-       unsigned long length_low;
-       unsigned long length_high;
-       unsigned long type;
-     } memory_map_t;
      
-     #endif /* ! ASM */
+      /* ! ASM */
+
+
+
+#define MULTIBOOT_FLAG_MEM			1
+#define MULTIBOOT_FLAG_MMAP			32
+#define MULTIBOOT_MMAP_AVAILABLE	1
+
+#define SIZE_4KB		4096
+#define SIZE_1KB		1024
