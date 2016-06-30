@@ -12,10 +12,26 @@ global keyboard_handler
 global read_port
 global write_port
 global load_idt
-global load_gdt
+global load_gdt, disable_cursor
 
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main, _end
+
+disable_cursor:
+	 mov   bx,0x1c1b                     ; set cursor invisable
+     call  ChangeCursor
+
+ChangeCursor:
+          pushad
+          mov   dx,0x3D4
+          mov   al,0x0A
+          mov   ah,bh
+          out   dx,ax
+          inc   ax
+          mov   ah,bl
+          out   dx,ax
+          popad
+          ret
 
 read_port:
 	mov edx, [esp + 4]
