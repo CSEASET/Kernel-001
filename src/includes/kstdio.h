@@ -25,7 +25,12 @@ void scrollConsoleNL(struct console*);
 
 struct console consoles[4];
 char con0[SCREENSIZE], con1[SCREENSIZE], con2[SCREENSIZE], con3[SCREENSIZE];
+
+// points to the currently displayed console
 struct console *currentConsole;
+
+// points to the kernel debug console
+struct console *kernelConsole;
 char *vidptr = (char*)0xb8000;  //video mem begins here.
 int GLOBAL_CAPSLOCK = FALSE;
 struct console phyConsole;
@@ -148,7 +153,9 @@ void kmemcopy(char *source, char *dest, unsigned int size){
 // drawConsole: copies the current video buffer to the video buffer
 
 void drawConsole(struct console *c){
-    kmemcopy(c->vidptr, phyConsole.vidptr, SCREENSIZE);
+    if(currentConsole == c){ // only copy if it is the current active console 
+        kmemcopy(c->vidptr, phyConsole.vidptr, SCREENSIZE);
+    }
 } 
 
 // scrollConsole: scrolls the console buffer by one line 

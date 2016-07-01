@@ -27,7 +27,7 @@ typedef unsigned long		DWORD;
 typedef unsigned int u_int;
 
 
-
+extern void enable_interrupts(void);
 
 // global buffers
 

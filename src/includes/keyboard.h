@@ -12,6 +12,7 @@
 // externs here
 
 extern void keyboard_handler(void);
+extern void timer_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long * idt_ptr);
@@ -30,6 +31,7 @@ struct IDT_entry IDT[IDT_SIZE];
 void idt_init(void)
 {
     unsigned long keyboard_address;
+    unsigned long timer_address;
     unsigned long idt_address;
     unsigned long idt_ptr[2];
 
@@ -40,6 +42,14 @@ void idt_init(void)
     IDT[0x21].zero = 0;
     IDT[0x21].type_attr = 0x8e; /* INTERRUPT_GATE */
     IDT[0x21].offset_higherbits = (keyboard_address & 0xffff0000) >> 16;
+
+    /* populate IDT entry of timer's interrupt */
+    timer_address = (unsigned long) timer_handler; 
+    IDT[0x20].offset_lowerbits = timer_address & 0xffff;
+    IDT[0x20].selector = 0x08; /* KERNEL_CODE_SEGMENT_OFFSET */
+    IDT[0x20].zero = 0;
+    IDT[0x20].type_attr = 0x8e; /* INTERRUPT_GATE */
+    IDT[0x20].offset_higherbits = (timer_address & 0xffff0000) >> 16;
     
 
     /*     Ports
@@ -81,10 +91,10 @@ void idt_init(void)
     load_idt(idt_ptr);
 }
 
-void kb_init(void)
-{
+void irq_init(void){
     /* 0xFD is 11111101 - enables only IRQ1 (keyboard)*/
-    write_port(0x21 , 0xFD);
+    // but we also need IRQ0 0xFC is 11111100
+    write_port(0x21 , 0xFC);
 }
 
 

@@ -8,14 +8,14 @@ section .text
         dd - (0x1BADB002 + 0x00)   ;checksum. m+f+c should be zero
 
 global start
-global keyboard_handler
+global keyboard_handler, timer_handler
 global read_port
 global write_port
 global load_idt
-global load_gdt, disable_cursor
+global load_gdt, disable_cursor, enable_interrupts
 
 extern kmain 		;this is defined in the c file
-extern keyboard_handler_main, _end
+extern keyboard_handler_main, timer_handler_main
 
 disable_cursor:
 	 mov   bx,0x1c1b                     ; set cursor invisable
@@ -48,7 +48,7 @@ write_port:
 load_idt:
 	mov edx, [esp + 4]
 	lidt [edx]
-	sti 				;turn on interrupts
+	;sti 				;turn on interrupts
 	ret
 
 load_gdt:
@@ -69,16 +69,30 @@ keyboard_handler:
 	;push es
 	;push fs
 	;push gs
-	;pushad
+    cli     ;; disable interrupts while we handle this
+	pushad
 
 	call    keyboard_handler_main
 
-	;popad
+	popad
+    sti     ;; enable interrupts as we are finished
 	;pop gs;ds
 	;pop fs;es
 	;pop es;fs
 	;pop ds;gs
 	iretd
+
+timer_handler:
+    cli     ;; disable interrupts while we handle this
+    pushad
+    call    timer_handler_main
+    popad
+    sti     ;; enable interrupts
+    iretd
+
+enable_interrupts:
+    sti
+    ret
 
 start:
     cli
