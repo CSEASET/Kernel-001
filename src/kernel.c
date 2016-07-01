@@ -34,7 +34,7 @@ void kmain(multiboot_info_t* mbd, unsigned int magic)
     // console handling
     console_init();
     currentConsole = &consoles[0];
-    kernelConsole = &consoles[0];
+    kernelConsole = &consoles[3];
 
 
     kputs(str, currentConsole);
