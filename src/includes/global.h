@@ -16,7 +16,8 @@
 
 #define NULL				((void *)0x00000000)
 
-
+#define BLANK_CHAR ' '
+#define PROMPT_STR "root:$ "
 // data types
 
 typedef int					BOOL;

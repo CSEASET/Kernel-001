@@ -68,7 +68,7 @@ void kclearScreen(struct console* c){
 	unsigned int j = 0;
 	while(j < 80 * 25 * 2) {
         /* blank character */
-        *(c->vidptr + j) = '-';
+        *(c->vidptr + j) = BLANK_CHAR;
         /* attribute-byte - light grey on black screen */
         *(c->vidptr + j+1) = 0x07;         
         j += 2;
@@ -121,7 +121,7 @@ void knewLine(struct console *c ){
         scrollConsoleNL(c);
     }
 
-    kputs("<root>$ ", c);
+    kputs(PROMPT_STR, c);
     drawConsole(c);
 }
 
@@ -165,7 +165,7 @@ void scrollConsole(struct console *c){
     c->currentLocation -= i;
 //    return;
     for(k=0; k<COLUMNS_IN_LINE; k++){
-        kputchar('-', c);
+        kputchar(BLANK_CHAR, c);
     }
 
     c->currentLocation -= i;
@@ -184,7 +184,7 @@ void scrollConsoleNL(struct console *c){
     c->currentLocation = SCREENSIZE - i;
     
     for(k=0; k<COLUMNS_IN_LINE; k++){
-        kputchar('-', c);
+        kputchar(BLANK_CHAR, c);
     }
 
     c->currentLocation = SCREENSIZE - i;

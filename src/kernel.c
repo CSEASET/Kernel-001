@@ -2,7 +2,7 @@
 #include "memory/multiboot.h"
 #include "includes/kstdio.h"
 #include "includes/keyboard.h"
-#include "memory/mm.c"
+//#include "memory/mm.c"
 
 
 
@@ -35,7 +35,7 @@ void kmain(multiboot_info_t* mbd, unsigned int magic)
     kputs(str, currentConsole);
     drawConsole(currentConsole);
 
-    kputs(itoa(mbd->flags, 2), currentConsole);
+    //kputs(itoa(mbd->flags, 2), currentConsole);
     
     
     
