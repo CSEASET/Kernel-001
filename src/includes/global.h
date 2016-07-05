@@ -28,6 +28,7 @@ typedef unsigned int u_int;
 
 
 extern void enable_interrupts(void);
+extern void disable_cursor(void);
 
 // global buffers
 
