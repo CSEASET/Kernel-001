@@ -43,8 +43,23 @@ void timer_handler_main(){
 /* Sets up the system clock by installing the timer handler
 *  into IRQ0 */
 void sched_init(){
+    int i=0;
     // set timer frequency to 100 Hz 
     timer_phase(100);
+    
+    for(i<3;i++){
+        task_q[i].valid = 0;
+    }
+
+    schedLock.foo = 0L;
+    currentTask = 0;
+
+
+    // run schedule
+    sched();
+
+
+
 
    /* Installs 'timer_handler' to IRQ0 */
     //irq_install_handler(0, timer_handler); // idt_init handles that

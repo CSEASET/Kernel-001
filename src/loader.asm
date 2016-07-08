@@ -12,7 +12,7 @@ global keyboard_handler, timer_handler
 global read_port
 global write_port
 global load_idt
-global load_gdt, disable_cursor, enable_interrupts
+global load_gdt, disable_cursor, enable_interrupts, disable_interrupts
 
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main, timer_handler_main
@@ -92,6 +92,10 @@ timer_handler:
 
 enable_interrupts:
     sti
+    ret
+
+enable_interrupts:
+    cli
     ret
 
 start:

@@ -31,6 +31,7 @@ struct console *currentConsole;
 
 // points to the kernel debug console
 struct console *kernelConsole;
+
 char *vidptr = (char*)0xb8000;  //video mem begins here.
 int GLOBAL_CAPSLOCK = FALSE;
 struct console phyConsole;
