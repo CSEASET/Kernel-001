@@ -1,8 +1,4 @@
 
-extern void enable_interrupts(void);
-extern void disable_interrupts(void);
-
-
 typedef struct registers {
 	DWORD eax, ebx, ecx, edx, esi, edi , ebp, eip, esp;
 	WORD cs, ds, es, gs, fs, ss;
@@ -25,7 +21,16 @@ MUTEX schedLock;
 // context_switch: switch currentTask's context with nextTask's context
 
 void context_switch(int currentTask, int nextTask){
-    if()
+    if(currentTask == runningTask){
+        kputs("current task has been rescheduled! resuming it...\n");
+        return;
+    }
+
+    // performing a context switch now
+
+    // step 1 - saving currentTask PCB to task_q
+
+    
 } 
 
 // sched: goes through the task queue and selects a task to queue
