@@ -12,6 +12,8 @@ struct console {
 	char *vidptr;
 	int currentLocation;
     char cno[3];
+    char lineBuffer[2000];
+    int lbLoc;
 };
 
 // prototypes
@@ -22,6 +24,9 @@ void kputs(const char *, struct console *);
 char * strcpy(char *, char *);
 void scrollConsole(struct console*);
 void scrollConsoleNL(struct console*);
+void parseKernelCommand(struct console*);
+
+
 
 struct console consoles[4];
 char con0[SCREENSIZE], con1[SCREENSIZE], con2[SCREENSIZE], con3[SCREENSIZE];
@@ -43,18 +48,29 @@ void console_init(){
     phyConsole.vidptr = vidptr;
     phyConsole.currentLocation = 0;
 
-    consoles[0].vidptr = (char*)con0;
+    consoles[0].vidptr = con0;
     consoles[0].currentLocation = 0;
     strcpy(consoles[0].cno, "F1");
+    consoles[0].lineBuffer[0] = '\0';
+    consoles[0].lbLoc = 0;
+
     consoles[1].vidptr = con1;
     consoles[1].currentLocation = 0;
     strcpy(consoles[1].cno, "F2");
+    consoles[1].lineBuffer[0] = '\0';
+    consoles[1].lbLoc = 0;
+
     consoles[2].vidptr = con2;
     consoles[2].currentLocation = 0;
     strcpy(consoles[2].cno, "F3");
+    consoles[2].lineBuffer[0] = '\0';
+    consoles[2].lbLoc = 0;
+
     consoles[3].vidptr = con3;
     consoles[3].currentLocation = 0;
     strcpy(consoles[3].cno, "F4");
+    consoles[3].lineBuffer[0] = '\0';
+    consoles[3].lbLoc = 0;
 
     for(; i<4; i++){
         kclearScreen(&consoles[i]);
@@ -99,6 +115,8 @@ void kputchar(unsigned char ch, struct console* c ){
     c->vidptr[c->currentLocation++] = ch;
     c->vidptr[c->currentLocation++] = 0x07;
 
+    // save character in lineBuffer of the console
+    c->lineBuffer[c-lbLoc++] = ch;
 
     drawConsole(c);
 }
@@ -128,6 +146,16 @@ void knewLine(struct console *c ){
     }
 
     kputs(PROMPT_STR, c);
+
+    // handle command input on kernelConsole
+    if(c == kernelConsole){
+        c->lineBuffer[c->lbLoc] = '\0';
+        parseKernelCommand(c); 
+
+        // reset lineBuffer now
+        c->lbLoc = 0;
+    }
+
     drawConsole(c);
 }
 
@@ -259,4 +287,14 @@ char* itoa(int num, int base)
     reverse(str, i);
  
     return str;
+}
+
+// parseKernelCommand: parse commands entered in the kernelConsole and takes action accordingly
+
+void parseKernelCommand(struct console *c){
+    char * l = c->lineBuffer;
+
+    switch(l[0]){
+        case '1':
+    }
 }

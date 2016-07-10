@@ -1,4 +1,6 @@
 
+extern struct console;
+
 typedef struct registers {
 	DWORD eax, ebx, ecx, edx, esi, edi , ebp, eip, esp;
 	WORD cs, ds, es, gs, fs, ss;
@@ -13,7 +15,7 @@ typedef struct task_structure {
 
 
 
-task task_q[3];
+task task_q[MAX_TASKS];
 int currentTask, nextTask;
 
 MUTEX schedLock;
@@ -29,6 +31,7 @@ void context_switch(int currentTask, int nextTask){
     // performing a context switch now
 
     // step 1 - saving currentTask PCB to task_q
+    
 
     
 } 
@@ -46,11 +49,11 @@ void sched(){
 
     nextTask = currentTask + 1;
     
-    if(currentTask == 2){
+    if(currentTask == (MAX_TASKS - 1)){
         nextTask = 0;
     }
 
-    for(i=nextTask; i<3; i++){
+    for(i=nextTask; i<MAX_TASKS; i++){
         if(!task_q[i].valid)
             continue;
 
@@ -66,4 +69,14 @@ void sched(){
     mutex_unlock(&schedLock);
 }
 
+// kgetConsole: returns a pointer to the console glued with the process specified by the process ID
 
+console * kgetConsole(u_int pid){
+    return task_q[pid].con;
+}
+
+// kexit: called by an exitting process, marks the process's slot in the queue as free
+
+void kexit(u_int pid){
+    task_q[pid].valid = FALSE;
+}

@@ -18,6 +18,8 @@
 
 #define BLANK_CHAR ' '
 #define PROMPT_STR "root:$ "
+#define MAX_TASKS 3
+
 // data types
 
 typedef int					BOOL;
