@@ -1,5 +1,4 @@
-
-extern struct console;
+#include "../bin/numeric.c"
 
 typedef struct registers {
 	DWORD eax, ebx, ecx, edx, esi, edi , ebp, eip, esp;
@@ -9,7 +8,7 @@ typedef struct registers {
 
 typedef struct task_structure {
     regs r;
-    console * con;
+    struct console * con;
     int valid;
 } task;
 
@@ -18,13 +17,15 @@ typedef struct task_structure {
 task task_q[MAX_TASKS];
 int currentTask, nextTask;
 
-MUTEX schedLock;
+struct MUTEX schedLock;
 
 // context_switch: switch currentTask's context with nextTask's context
 
-void context_switch(int currentTask, int nextTask){
-    if(currentTask == runningTask){
-        kputs("current task has been rescheduled! resuming it...\n");
+void context_switch(int cTask, int nTask){
+    kputs(itoa(cTask,10), kernelConsole);
+    kputs(itoa(nTask,10), kernelConsole);
+    if(cTask == nTask){
+        kputs("current task has been rescheduled! resuming it...\n", kernelConsole);
         return;
     }
 
@@ -34,7 +35,43 @@ void context_switch(int currentTask, int nextTask){
     
 
     
-} 
+}
+
+// newTask: run a new task on an available console
+
+void newTask(int processNo){
+    int i=0, freeSlot = -1;
+    for(; i<MAX_TASKS; i++){
+        if(task_q[i].valid == FALSE){
+           // found a free task!
+           freeSlot = i;
+           break;
+        }
+    }
+
+    if(freeSlot == -1) {
+        kputs("Error: MAX_TASKS are already running!", kernelConsole);
+        return;
+    }
+    
+    // critical section starts
+   
+    task_q[freeSlot].valid = TRUE;
+    task_q[freeSlot].con = &consoles[freeSlot];
+
+
+    //currentTask = freeSlot;
+    // end critical section
+    // since its done, we should enable interrupts
+    
+   // enable_interrupts();
+/*
+    switch(processNo){
+        case 1:
+            numeric(freeSlot);
+            return;
+   }*/
+}
 
 // sched: goes through the task queue and selects a task to queue
 
@@ -47,7 +84,7 @@ void sched(){
     // lock our environment
     mutex_lock(&schedLock);
 
-    nextTask = currentTask + 1;
+    nextTask = currentTask;
     
     if(currentTask == (MAX_TASKS - 1)){
         nextTask = 0;
@@ -71,7 +108,7 @@ void sched(){
 
 // kgetConsole: returns a pointer to the console glued with the process specified by the process ID
 
-console * kgetConsole(u_int pid){
+struct console * kgetConsole(u_int pid){
     return task_q[pid].con;
 }
 

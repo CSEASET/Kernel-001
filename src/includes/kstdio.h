@@ -1,6 +1,10 @@
 // Kernel STDIO library
 #include "global.h"
 
+// externs here
+
+void newTask(int);
+
 /* there are 25 lines each of 80 columns; each element takes 2 bytes */
 #define LINES 25
 #define COLUMNS_IN_LINE 80
@@ -21,6 +25,7 @@ void kclearScreen(struct console* c);
 void drawConsole();
 void knewLine(struct console* c);
 void kputs(const char *, struct console *);
+void kputchar(unsigned char, struct console *);
 char * strcpy(char *, char *);
 void scrollConsole(struct console*);
 void scrollConsoleNL(struct console*);
@@ -98,6 +103,22 @@ void kclearScreen(struct console* c){
     drawConsole(c);
 }
 
+// kbnewLine: handles newline char and performs extra tasks
+
+void kbnewLine(struct console* c ){
+    if(c == kernelConsole) {
+        knewLine(c);
+        c->lineBuffer[c->lbLoc] = '\0';
+        // reset the line buffer now
+        c->lbLoc = 0;
+
+        parseKernelCommand(c);
+        return;
+    }
+
+    knewLine(c);
+}
+
 // kprintchar: prints char to video buffer
 
 void kputchar(unsigned char ch, struct console* c ){
@@ -114,11 +135,19 @@ void kputchar(unsigned char ch, struct console* c ){
 
     c->vidptr[c->currentLocation++] = ch;
     c->vidptr[c->currentLocation++] = 0x07;
-
-    // save character in lineBuffer of the console
-    c->lineBuffer[c-lbLoc++] = ch;
-
+    
     drawConsole(c);
+}
+
+// kprintchar: prints char to video buffer
+
+void kbputchar(unsigned char ch, struct console* c ){
+    if(c == kernelConsole){
+        // save character in lineBuffer of the console
+        c->lineBuffer[c->lbLoc++] = ch;
+    }
+    
+    kputchar(ch, c);
 }
 
 // kputs: prints str to buffer
@@ -146,16 +175,6 @@ void knewLine(struct console *c ){
     }
 
     kputs(PROMPT_STR, c);
-
-    // handle command input on kernelConsole
-    if(c == kernelConsole){
-        c->lineBuffer[c->lbLoc] = '\0';
-        parseKernelCommand(c); 
-
-        // reset lineBuffer now
-        c->lbLoc = 0;
-    }
-
     drawConsole(c);
 }
 
@@ -289,12 +308,27 @@ char* itoa(int num, int base)
     return str;
 }
 
+// strcmp: compare strings
+
+int strcmp(const char* s1, const char* s2){
+    while(*s1 && (*s1==*s2))
+        s1++,s2++;
+    return *(const unsigned char*)s1-*(const unsigned char*)s2;
+}
+
 // parseKernelCommand: parse commands entered in the kernelConsole and takes action accordingly
 
 void parseKernelCommand(struct console *c){
-    char * l = c->lineBuffer;
+    char * cmd = c->lineBuffer;
+    kputs("got the following command", c);
+    kputs(cmd, c);
+    knewLine(c);
 
-    switch(l[0]){
-        case '1':
+    if(strcmp(cmd, "numeric") == 0){
+        kputs("scheduling \"numeric\" to run on the next available console!\n", c);
+        newTask(1);
+    } else {
+        kputs("unknown command\n", c);
     }
+
 }

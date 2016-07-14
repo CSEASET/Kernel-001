@@ -147,20 +147,16 @@ void keyboard_handler_main(void) {
                 break;
 
             case 28:
-                knewLine(currentConsole);
+                kbnewLine(currentConsole);
                 break;
  
             default:
-        /*        if(currentConsole->currentLocation == SCREEN_SIZE){
-                    scrollConsole(currentConsole);
-                }
-*/
                 if(GLOBAL_CAPSLOCK){
-                    kputchar((char) (keyboard_map[(unsigned char) keycode] - 32), currentConsole);
+                    kbputchar((char) (keyboard_map[(unsigned char) keycode] - 32), currentConsole);
                  //   currentConsole->vidptr[currentConsole->currentLocation++] = ;
                  //   currentConsole->vidptr[currentConsole->currentLocation++] = 0x07;   
                 } else {
-                    kputchar(keyboard_map[(unsigned char) keycode], currentConsole);
+                    kbputchar(keyboard_map[(unsigned char) keycode], currentConsole);
                     //currentConsole->vidptr[currentConsole->currentLocation++] = keyboard_map[(unsigned char) keycode];
                     //currentConsole->vidptr[currentConsole->currentLocation++] = 0x07;
                 }

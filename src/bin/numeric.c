@@ -1,14 +1,14 @@
-#include "includes/stdio.h"
+#include "../includes/stdio.h"
 
-void numbers(u_int pid){
+void numeric(u_int pid){
     DWORD i=0;
-    for(i<100000000; i++){
-        puts(atoi(i, 10), pid);
+    for(; i<100000000; i++){
+        putstr(itoa(i, 10), pid);
         nl(pid);
     }
 
     // fnish up!
     // explicit syscall to notify kernel that we're done:
 
-    exit(pid);
+    doexit(pid);
 }

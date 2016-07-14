@@ -1,3 +1,5 @@
+#include "task.h"
+
 // we define our round robin scheduling algorithm here
 
 extern void write_port(unsigned short port, unsigned char data);
@@ -33,7 +35,7 @@ void timer_handler_main(){
     *  display a message on the screen */
     if (timer_ticks % 100 == 0)
     {
-        kputs("One second has passed\n", kernelConsole);
+        sched();//kputs("One second has passed\n", kernelConsole);
     }
 
     // send ACK to PIC, idiot!
@@ -47,16 +49,16 @@ void sched_init(){
     // set timer frequency to 100 Hz 
     timer_phase(100);
     
-    for(i<3;i++){
+    for(; i<3; i++){
         task_q[i].valid = 0;
     }
 
     schedLock.foo = 0L;
-    currentTask = 0;
+    currentTask = -1;
 
 
     // run schedule
-    sched();
+    //sched(); // theres nothing to run at init, IDIOT!!
 
 
 

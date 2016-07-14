@@ -94,7 +94,7 @@ enable_interrupts:
     sti
     ret
 
-enable_interrupts:
+disable_interrupts:
     cli
     ret
 

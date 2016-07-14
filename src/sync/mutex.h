@@ -12,7 +12,7 @@ void mutex_init( struct MUTEX * );
 	DWORD flags; \
 	ASM( "pushfl" ::: "memory" ); \
 	ASM( "popl %0" : "=g" ( flags ) :: "memory" ); \
-	interrupt_disableAll(); \
+	disable_interrupts(); \
 
 // restore the flags 
 #define mutex_unlock( m ) \
