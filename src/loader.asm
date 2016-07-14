@@ -12,10 +12,14 @@ global keyboard_handler, timer_handler
 global read_port
 global write_port
 global load_idt
-global load_gdt, disable_cursor, enable_interrupts, disable_interrupts
+global load_gdt, disable_cursor, enable_interrupts, disable_interrupts, breakpoint
 
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main, timer_handler_main
+
+breakpoint:
+    xchg bx, bx
+    ret
 
 disable_cursor:
 	 mov   bx,0x1c1b                     ; set cursor invisable
@@ -84,9 +88,9 @@ keyboard_handler:
 
 timer_handler:
     cli     ;; disable interrupts while we handle this
-    pushad
+    ;;pushad
     call    timer_handler_main
-    popad
+    ;;popad
     sti     ;; enable interrupts
     iretd
 

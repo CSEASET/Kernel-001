@@ -9,3 +9,4 @@ mouse: enabled=0
 clock: sync=realtime
 cpu: ips=70000000
 display_library: sdl
+magic_break: enabled=1

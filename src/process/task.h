@@ -1,5 +1,7 @@
 #include "../bin/numeric.c"
 
+extern void breakpoint(void);
+
 typedef struct registers {
 	DWORD eax, ebx, ecx, edx, esi, edi , ebp, eip, esp;
 	WORD cs, ds, es, gs, fs, ss;
@@ -10,6 +12,8 @@ typedef struct task_structure {
     regs r;
     struct console * con;
     int valid;
+    int processNo;
+    int firstRun;
 } task;
 
 
@@ -26,14 +30,21 @@ void context_switch(int cTask, int nTask){
     kputs(itoa(nTask,10), kernelConsole);
     if(cTask == nTask){
         kputs("current task has been rescheduled! resuming it...\n", kernelConsole);
-        return;
+        //return;
     }
 
     // performing a context switch now
 
     // step 1 - saving currentTask PCB to task_q
     
+    task *t = &task_q[cTask];
+    regs *r = &t->r;
+    breakpoint();
 
+    ASM ("movl %%ecx, %0;" : "=m" (r->eax) ::);
+    
+    kputs(itoa(r->eax, 16), kernelConsole);
+    breakpoint();
     
 }
 
@@ -55,22 +66,26 @@ void newTask(int processNo){
     }
     
     // critical section starts
-   
-    task_q[freeSlot].valid = TRUE;
-    task_q[freeSlot].con = &consoles[freeSlot];
+    task * t = &task_q[freeSlot];
+    t->valid = TRUE;
+    t->con = &consoles[freeSlot];
+    t->firstRun = TRUE;
+    t->processNo = processNo;
 
 
-    //currentTask = freeSlot;
+    currentTask = freeSlot;
     // end critical section
+ 
+ 
     // since its done, we should enable interrupts
     
-   // enable_interrupts();
-/*
+    enable_interrupts();
+
     switch(processNo){
         case 1:
             numeric(freeSlot);
             return;
-   }*/
+   }
 }
 
 // sched: goes through the task queue and selects a task to queue
