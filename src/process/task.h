@@ -137,12 +137,12 @@ void newTask(int processNo){
 // sched: goes through the task queue and selects a task to queue
 
 void sched(){
-    kputs("scheduling...\n", kernelConsole);
-    int i;
+    //kputs("scheduling...\n", kernelConsole);
+    int i,loopFlag = FALSE;
     
 
-    kputs(itoa(currentTask,10), kernelConsole);
-    kputs(itoa(nextTask,10), kernelConsole);
+    //kputs(itoa(currentTask,10), kernelConsole);
+    //kputs(itoa(nextTask,10), kernelConsole);
 
     // lock our environment
 //    mutex_lock(&schedLock);
@@ -150,19 +150,27 @@ void sched(){
     nextTask = currentTask;
     
     if(currentTask == (MAX_TASKS - 1)){
-        nextTask = 0;
+        nextTask = -1;
     }
 
     for(i=nextTask+1; i<MAX_TASKS; i++){
-        if(!task_q[i].valid)
-            continue;
-
-        nextTask = i; // 1. we've selected the next task. 2. proceed to schedule it. 3. ??? 4. profit! 
-        break;        
+        //kputs(itoa(i,10), kernelConsole);
+        if(!task_q[i].valid){
+            if(i == (MAX_TASKS - 1)){
+                if(loopFlag){
+                    break;
+                }
+                loopFlag = TRUE;
+                i = -1;
+            }
+        } else {
+            nextTask = i; // 1. we've selected the next task. 2. proceed to schedule it. 3. ??? 4. profit! 
+            break;  
+        }      
     }
 
-    kputs(itoa(currentTask,10), kernelConsole);
-    kputs(itoa(nextTask,10), kernelConsole);
+    //kputs(itoa(currentTask,10), kernelConsole);
+    //kputs(itoa(nextTask,10), kernelConsole);
     // calling master chief // this job has been given to a kernel dispatcher
     //context_switch(currentTask, nextTask);
 

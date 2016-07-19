@@ -56,7 +56,7 @@ void sched_init(){
 
     schedLock.foo = 0L;
     currentTask = -1;
-
+    nextTask = -1;
 
     // run schedule
     //sched(); // theres nothing to run at init, IDIOT!!

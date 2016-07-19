@@ -1,12 +1,12 @@
 #include "../includes/stdio.h"
 
 extern void breakpoint(void);
-static char num_i;
+static WORD num_i[MAX_TASKS];
 
 void numeric(u_int pid){
-    num_i = 0;
-    for(; num_i<100000000; num_i++){
-        putstr(itoa(num_i, 10), pid);
+    num_i[pid] = 0;
+    for(; num_i[pid]<100000000; num_i[pid]++){
+        putstr(itoa(num_i[pid], 10), pid);
         nl(pid);
         //breakpoint();
     }
@@ -18,8 +18,8 @@ void numeric(u_int pid){
 }
 
 void continue_numeric(u_int pid){
-    for(; num_i<100000000; num_i++){
-        putstr(itoa(num_i, 10), pid);
+    for(; num_i[pid]<100000000; num_i[pid]++){
+        putstr(itoa(num_i[pid], 10), pid);
         nl(pid);
         //breakpoint();
     }
