@@ -35,7 +35,7 @@ void timer_handler_main(){
     *  display a message on the screen */
     if (timer_ticks % 100 == 0)
     {
-        sched();//kputs("One second has passed\n", kernelConsole);
+        //sched();//kputs("One second has passed\n", kernelConsole);
     }
 
     // send ACK to PIC, idiot!
