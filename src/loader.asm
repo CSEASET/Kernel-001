@@ -13,6 +13,8 @@ global read_port
 global write_port
 global load_idt
 global load_gdt, disable_cursor, enable_interrupts, disable_interrupts, breakpoint
+global process1_stack_space, process2_stack_space, process3_stack_space
+global save_kernel_stack, load_kernel_stack, switch_esp
 
 extern kmain 		;this is defined in the c file
 extern keyboard_handler_main, timer_handler_main
@@ -69,30 +71,38 @@ flush_cpu:
 	ret
 
 keyboard_handler:                 
-	;push ds
-	;push es
-	;push fs
-	;push gs
     cli     ;; disable interrupts while we handle this
 	pushad
-
+    pushfd
+    ;; call load_kernel_stack
 	call    keyboard_handler_main
 
+    popfd
 	popad
     sti     ;; enable interrupts as we are finished
-	;pop gs;ds
-	;pop fs;es
-	;pop es;fs
-	;pop ds;gs
 	iretd
 
 timer_handler:
     cli     ;; disable interrupts while we handle this
-    ;;pushad
+    pushad
+    pushfd
+    
+    ;;call load_kernel_stack    
+
     call    timer_handler_main
-    ;;popad
+    
+    popfd
+    popad
     sti     ;; enable interrupts
     iretd
+
+load_kernel_stack:
+    mov esp, [kernel_stack]
+    ret
+
+save_kernel_stack:
+    mov [kernel_stack], esp;
+    ret
 
 enable_interrupts:
     sti
@@ -104,7 +114,8 @@ disable_interrupts:
 
 start:
     cli
-	mov esp, stack_space
+    call breakpoint
+	mov esp, kernel_stack_space
     push ebx
 	call kmain
     cli
@@ -112,6 +123,23 @@ start:
 	hlt 				;halt the CPU
     jmp .loop
 
+
+switch_esp: ;; load the esp in eax but save the kernel stack too
+    mov [kernel_stack], esp
+    mov esp, eax
+    ret
+
 section .bss
-resb 8192; 8KB for stack
-stack_space:
+resb 8192   ;; 8KB for kernel stack
+kernel_stack_space:
+
+resb 8192   ;; 8KB for process 1
+process1_stack_space:
+
+resb 8192   ;; another 8KB for process 2
+process2_stack_space:
+
+resb 8192   ;; another 8KB for process 3
+process3_stack_space:
+
+kernel_stack: resb 4

@@ -32,6 +32,10 @@ typedef unsigned int u_int;
 extern void enable_interrupts(void);
 extern void disable_interrupts(void);
 extern void disable_cursor(void);
+extern void save_kernel_stack(void);
+extern void load_kernel_stack(void);
+extern void switch_esp(void);
+extern void breakpoint(void);
 
 // global buffers
 

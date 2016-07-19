@@ -3,7 +3,8 @@
 
 // externs here
 
-void newTask(int);
+extern void newTask(int);
+extern void sched_dispatcher(void);
 
 /* there are 25 lines each of 80 columns; each element takes 2 bytes */
 #define LINES 25
@@ -176,6 +177,7 @@ void knewLine(struct console *c ){
 
     kputs(PROMPT_STR, c);
     drawConsole(c);
+    sched_dispatcher();
 }
 
 char * strcpy(char *dest, char *source){

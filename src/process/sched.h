@@ -34,8 +34,9 @@ void timer_handler_main(){
     /* Every 18 clocks (approximately 1 second), we will
     *  display a message on the screen */
     if (timer_ticks % 100 == 0)
-    {
-        //sched();//kputs("One second has passed\n", kernelConsole);
+    {   
+        //save_kernel_stack();
+        sched();//kputs("One second has passed\n", kernelConsole);
     }
 
     // send ACK to PIC, idiot!
